@@ -14,6 +14,14 @@
 import UIKit
 
 extension UIView {
+    private var shouldSkipSwizzling: Bool {
+        #if targetEnvironment(simulator)
+        if #available(iOS 18.0, *) {
+            return true
+        }
+        #endif
+        return false
+    }
 
     @objc func skeletonLayoutSubviews() {
         guard Thread.isMainThread else { return }
@@ -29,6 +37,8 @@ extension UIView {
     }
     
     func swizzleLayoutSubviews() {
+        guard !shouldSkipSwizzling else { return }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             DispatchQueue.once(token: "UIView.SkeletonView.swizzleLayoutSubviews") {
                 swizzle(selector: #selector(UIView.layoutSubviews),
@@ -41,6 +51,8 @@ extension UIView {
     }
     
     func unSwizzleLayoutSubviews() {
+        guard !shouldSkipSwizzling else { return }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             DispatchQueue.removeOnce(token: "UIView.SkeletonView.swizzleLayoutSubviews") {
                 swizzle(selector: #selector(UIView.skeletonLayoutSubviews),
@@ -52,6 +64,8 @@ extension UIView {
     }
     
     func swizzleTraitCollectionDidChange() {
+        guard !shouldSkipSwizzling else { return }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             DispatchQueue.once(token: "UIView.SkeletonView.swizzleTraitCollectionDidChange") {
                 swizzle(selector: #selector(UIView.traitCollectionDidChange(_:)),
@@ -63,6 +77,8 @@ extension UIView {
     }
     
     func unSwizzleTraitCollectionDidChange() {
+        guard !shouldSkipSwizzling else { return }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             DispatchQueue.removeOnce(token: "UIView.SkeletonView.swizzleTraitCollectionDidChange") {
                 swizzle(selector: #selector(UIView.skeletonTraitCollectionDidChange(_:)),
