@@ -14,7 +14,6 @@
 import UIKit
 
 extension UIView {
-
     @objc func skeletonLayoutSubviews() {
         guard Thread.isMainThread else { return }
         skeletonLayoutSubviews()

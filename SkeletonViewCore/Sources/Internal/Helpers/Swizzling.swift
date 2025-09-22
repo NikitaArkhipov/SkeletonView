@@ -3,6 +3,11 @@
 import Foundation
 
 func swizzle(selector originalSelector: Selector, with swizzledSelector: Selector, inClass: AnyClass, usingClass: AnyClass) {
+#if targetEnvironment(simulator)
+    if #available(iOS 18.0, *) {
+        return
+    }
+#endif
     guard let originalMethod = class_getInstanceMethod(inClass, originalSelector),
         let swizzledMethod = class_getInstanceMethod(usingClass, swizzledSelector)
         else { return }
